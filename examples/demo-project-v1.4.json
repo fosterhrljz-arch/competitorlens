@@ -1,0 +1,721 @@
+{
+  "version": 3,
+  "activeId": "demo-brew",
+  "projects": [
+    {
+      "id": "demo-brew",
+      "name": "Brew & Co.",
+      "industry": "Coffee subscriptions",
+      "demo": true,
+      "createdAt": "2026-11-12T12:00:00.000Z",
+      "opportunityState": {},
+      "competitors": [
+        {
+          "id": "daybreak",
+          "name": "Daybreak",
+          "url": "https://daybreak.example/",
+          "positioning": "Specialty coffee for everyday rituals.",
+          "products": "Freshly roasted coffee; monthly subscription",
+          "pricing": "$18 / 250 g bag",
+          "priceAmount": 18,
+          "currency": "USD",
+          "priceUnit": "250 g bag",
+          "features": [
+            "Subscription",
+            "Brew guides",
+            "Single origin"
+          ],
+          "audiences": [
+            "Home enthusiasts",
+            "Busy professionals"
+          ],
+          "needs": "Consistent coffee at home with simple preparation.",
+          "motivations": "Make a daily ritual feel special.",
+          "interests": "Home brewing; seasonal coffees",
+          "behavior": "Monthly delivery is offered; actual repeat purchasing is unknown.",
+          "notes": "",
+          "breadth": 2,
+          "tier": 4,
+          "sources": [
+            {
+              "id": "d1",
+              "title": "Sample product page",
+              "excerpt": "Freshly roasted single-origin coffee for home enthusiasts. Each 250 g bag starts at $18.",
+              "fields": [
+                "products",
+                "pricing",
+                "audiences"
+              ],
+              "url": "",
+              "kind": "Demo",
+              "method": "demo",
+              "segmentMappings": [
+                {
+                  "segmentId": "segment-1",
+                  "fields": [
+                    "audiences"
+                  ]
+                }
+              ],
+              "collectedAt": "2026-11-12T12:00:00.000Z"
+            },
+            {
+              "id": "d2",
+              "title": "Sample subscription page",
+              "excerpt": "A monthly coffee subscription designed for busy mornings, with brew guides included.",
+              "fields": [
+                "features",
+                "audiences",
+                "behavior"
+              ],
+              "url": "",
+              "kind": "Demo",
+              "method": "demo",
+              "segmentMappings": [
+                {
+                  "segmentId": "segment-2",
+                  "fields": [
+                    "audiences"
+                  ]
+                }
+              ],
+              "collectedAt": "2026-11-12T12:00:00.000Z"
+            },
+            {
+              "id": "d3",
+              "title": "Sample analyst notes",
+              "excerpt": "Everyday ritual positioning suggests a focused specialty offer. Home convenience and a rewarding routine are hypotheses. Qualitative breadth 2/5; premium positioning 4/5.",
+              "fields": [
+                "positioning",
+                "needs",
+                "motivations",
+                "interests",
+                "scores"
+              ],
+              "url": "",
+              "kind": "Demo",
+              "method": "demo",
+              "segmentMappings": [],
+              "collectedAt": "2026-11-12T12:00:00.000Z"
+            }
+          ],
+          "audienceResearch": [
+            {
+              "id": "segment-1",
+              "label": "Home enthusiasts",
+              "needs": "Compare roast styles for home brewing.",
+              "motivations": "Develop a satisfying home ritual.",
+              "interests": "Brewing methods and origins",
+              "behavior": "Sample hypothesis: may trial a small bag; no purchases measured."
+            },
+            {
+              "id": "segment-2",
+              "label": "Busy professionals",
+              "needs": "Spend less time arranging coffee deliveries.",
+              "motivations": "Convenience during the working week.",
+              "interests": "Simple preparation and delivery controls",
+              "behavior": "Sample hypothesis: may prefer predictable delivery; no purchases measured."
+            }
+          ],
+          "researchFindings": [],
+          "seriesIndex": 0,
+          "priceNoteReview": null,
+          "demo": true,
+          "updatedAt": "2026-11-12T12:00:00.000Z"
+        },
+        {
+          "id": "roam",
+          "name": "Roam Coffee",
+          "url": "https://roamcoffee.example/",
+          "positioning": "Premium, travel-inspired coffees.",
+          "products": "Rotating origins; tasting kits; coffee equipment",
+          "pricing": "$24 / 250 g bag",
+          "priceAmount": 24,
+          "currency": "USD",
+          "priceUnit": "250 g bag",
+          "features": [
+            "Subscription",
+            "Single origin",
+            "Tasting kits",
+            "Brew guides"
+          ],
+          "audiences": [
+            "Home enthusiasts",
+            "Conscious consumers"
+          ],
+          "needs": "Discover distinctive origins and understand sourcing.",
+          "motivations": "Curiosity and a connection to the producer.",
+          "interests": "Coffee origins; tasting; traceability",
+          "behavior": "Three-month tasting plans are offered; buyer preferences have not been measured.",
+          "notes": "",
+          "breadth": 5,
+          "tier": 5,
+          "sources": [
+            {
+              "id": "r1",
+              "title": "Sample collection page",
+              "excerpt": "Travel-inspired single-origin coffees and tasting kits, starting at $24 per 250 g bag.",
+              "fields": [
+                "products",
+                "pricing",
+                "positioning",
+                "features"
+              ],
+              "url": "",
+              "kind": "Demo",
+              "method": "demo",
+              "segmentMappings": [],
+              "collectedAt": "2026-11-12T12:00:00.000Z"
+            },
+            {
+              "id": "r2",
+              "title": "Sample audience page",
+              "excerpt": "For curious home brewers and conscious consumers who want to know where their coffee comes from.",
+              "fields": [
+                "audiences",
+                "interests"
+              ],
+              "url": "",
+              "kind": "Demo",
+              "method": "demo",
+              "segmentMappings": [
+                {
+                  "segmentId": "segment-1",
+                  "fields": [
+                    "audiences"
+                  ]
+                },
+                {
+                  "segmentId": "segment-2",
+                  "fields": [
+                    "audiences"
+                  ]
+                }
+              ],
+              "collectedAt": "2026-11-12T12:00:00.000Z"
+            },
+            {
+              "id": "r3",
+              "title": "Sample plan terms",
+              "excerpt": "The tasting subscription has an initial three-month commitment. Brew guides and coffee equipment are available.",
+              "fields": [
+                "behavior",
+                "features"
+              ],
+              "url": "",
+              "kind": "Demo",
+              "method": "demo",
+              "segmentMappings": [],
+              "collectedAt": "2026-11-12T12:00:00.000Z"
+            },
+            {
+              "id": "r4",
+              "title": "Sample analyst notes",
+              "excerpt": "Origin exploration and producer connection may motivate this audience; these are research hypotheses. Broad range 5/5; premium positioning 5/5.",
+              "fields": [
+                "needs",
+                "motivations",
+                "scores"
+              ],
+              "url": "",
+              "kind": "Demo",
+              "method": "demo",
+              "segmentMappings": [],
+              "collectedAt": "2026-11-12T12:00:00.000Z"
+            }
+          ],
+          "audienceResearch": [
+            {
+              "id": "segment-1",
+              "label": "Home enthusiasts",
+              "needs": "Compare roast styles for home brewing.",
+              "motivations": "Develop a satisfying home ritual.",
+              "interests": "Brewing methods and origins",
+              "behavior": "Sample hypothesis: may trial a small bag; no purchases measured."
+            },
+            {
+              "id": "segment-2",
+              "label": "Conscious consumers",
+              "needs": "Find clear sourcing information.",
+              "motivations": "Understand producer and environmental claims.",
+              "interests": "Traceability and responsible sourcing",
+              "behavior": "Sample hypothesis: may inspect sourcing claims before buying; not observed."
+            }
+          ],
+          "researchFindings": [],
+          "seriesIndex": 1,
+          "priceNoteReview": null,
+          "demo": true,
+          "updatedAt": "2026-11-12T12:00:00.000Z"
+        },
+        {
+          "id": "common",
+          "name": "Common Ground",
+          "url": "https://commonground.example/",
+          "positioning": "Approachable, no-fuss coffee for all.",
+          "products": "Everyday blends; office supply packs",
+          "pricing": "$16 / 250 g bag",
+          "priceAmount": 16,
+          "currency": "USD",
+          "priceUnit": "250 g bag",
+          "features": [
+            "Office packs",
+            "One-time purchase"
+          ],
+          "audiences": [
+            "Office teams",
+            "Conscious consumers"
+          ],
+          "needs": "Reliable supply, clear sourcing, and a practical price.",
+          "motivations": "Keep the team supplied without a complicated setup.",
+          "interests": "Workplace coffee; responsible sourcing",
+          "behavior": "One-time bags and office packs are offered; purchase frequency is unknown.",
+          "notes": "",
+          "breadth": 2,
+          "tier": 1,
+          "sources": [
+            {
+              "id": "c1",
+              "title": "Sample shop page",
+              "excerpt": "Everyday coffee blends from $16 per 250 g bag. One-time purchase and office packs available.",
+              "fields": [
+                "products",
+                "pricing",
+                "features",
+                "behavior"
+              ],
+              "url": "",
+              "kind": "Demo",
+              "method": "demo",
+              "segmentMappings": [],
+              "collectedAt": "2026-11-12T12:00:00.000Z"
+            },
+            {
+              "id": "c2",
+              "title": "Sample about page",
+              "excerpt": "Approachable coffee for office teams and conscious consumers, with clear sourcing information.",
+              "fields": [
+                "positioning",
+                "audiences",
+                "interests"
+              ],
+              "url": "",
+              "kind": "Demo",
+              "method": "demo",
+              "segmentMappings": [
+                {
+                  "segmentId": "segment-1",
+                  "fields": [
+                    "audiences"
+                  ]
+                },
+                {
+                  "segmentId": "segment-2",
+                  "fields": [
+                    "audiences"
+                  ]
+                }
+              ],
+              "collectedAt": "2026-11-12T12:00:00.000Z"
+            },
+            {
+              "id": "c3",
+              "title": "Sample analyst notes",
+              "excerpt": "Supply reliability and a practical price may matter to office buyers. Focused offering 2/5; accessible positioning 1/5. These are analyst assessments.",
+              "fields": [
+                "needs",
+                "motivations",
+                "scores"
+              ],
+              "url": "",
+              "kind": "Demo",
+              "method": "demo",
+              "segmentMappings": [],
+              "collectedAt": "2026-11-12T12:00:00.000Z"
+            }
+          ],
+          "audienceResearch": [
+            {
+              "id": "segment-1",
+              "label": "Office teams",
+              "needs": "Arrange dependable shared supplies.",
+              "motivations": "Keep a team supplied with minimal administration.",
+              "interests": "Office packs and practical billing",
+              "behavior": "Sample hypothesis: may compare group purchase terms; not observed."
+            },
+            {
+              "id": "segment-2",
+              "label": "Conscious consumers",
+              "needs": "Find clear sourcing information.",
+              "motivations": "Understand producer and environmental claims.",
+              "interests": "Traceability and responsible sourcing",
+              "behavior": "Sample hypothesis: may inspect sourcing claims before buying; not observed."
+            }
+          ],
+          "researchFindings": [],
+          "seriesIndex": 2,
+          "priceNoteReview": null,
+          "demo": true,
+          "updatedAt": "2026-11-12T12:00:00.000Z"
+        },
+        {
+          "id": "parcel",
+          "name": "Parcel Coffee",
+          "url": "https://parcelcoffee.example/",
+          "positioning": "Flexible coffee plans, delivered on your terms.",
+          "products": "Customizable coffee plans; blends; gift boxes",
+          "pricing": "$21 / 250 g bag",
+          "priceAmount": 21,
+          "currency": "USD",
+          "priceUnit": "250 g bag",
+          "features": [
+            "Subscription",
+            "Flexible delivery",
+            "Gift boxes",
+            "One-time purchase"
+          ],
+          "audiences": [
+            "Home enthusiasts",
+            "Busy professionals"
+          ],
+          "needs": "Fit deliveries around changing routines.",
+          "motivations": "Convenience and control over commitment.",
+          "interests": "Flexible subscriptions; gifting",
+          "behavior": "Skip, pause, or cancel is offered. No evidence of actual cancellation or retention rates.",
+          "notes": "",
+          "breadth": 4,
+          "tier": 2,
+          "sources": [
+            {
+              "id": "p1",
+              "title": "Sample plans page",
+              "excerpt": "Coffee for home enthusiasts and busy professionals. From $21 per 250 g bag, with blends, gift boxes, and one-time purchases. Skip, pause, or cancel your subscription.",
+              "fields": [
+                "products",
+                "pricing",
+                "audiences",
+                "features",
+                "behavior",
+                "positioning"
+              ],
+              "url": "",
+              "kind": "Demo",
+              "method": "demo",
+              "segmentMappings": [
+                {
+                  "segmentId": "segment-1",
+                  "fields": [
+                    "audiences"
+                  ]
+                },
+                {
+                  "segmentId": "segment-2",
+                  "fields": [
+                    "audiences"
+                  ]
+                }
+              ],
+              "collectedAt": "2026-11-12T12:00:00.000Z"
+            },
+            {
+              "id": "p2",
+              "title": "Sample analyst notes",
+              "excerpt": "Flexible delivery could appeal to changing schedules. Convenience and control are inferred motivations. Broad offering 4/5; accessible positioning 2/5.",
+              "fields": [
+                "needs",
+                "motivations",
+                "interests",
+                "scores"
+              ],
+              "url": "",
+              "kind": "Demo",
+              "method": "demo",
+              "segmentMappings": [],
+              "collectedAt": "2026-11-12T12:00:00.000Z"
+            }
+          ],
+          "audienceResearch": [
+            {
+              "id": "segment-1",
+              "label": "Home enthusiasts",
+              "needs": "Compare roast styles for home brewing.",
+              "motivations": "Develop a satisfying home ritual.",
+              "interests": "Brewing methods and origins",
+              "behavior": "Sample hypothesis: may trial a small bag; no purchases measured."
+            },
+            {
+              "id": "segment-2",
+              "label": "Busy professionals",
+              "needs": "Spend less time arranging coffee deliveries.",
+              "motivations": "Convenience during the working week.",
+              "interests": "Simple preparation and delivery controls",
+              "behavior": "Sample hypothesis: may prefer predictable delivery; no purchases measured."
+            }
+          ],
+          "researchFindings": [],
+          "seriesIndex": 3,
+          "priceNoteReview": null,
+          "demo": true,
+          "updatedAt": "2026-11-12T12:00:00.000Z"
+        }
+      ],
+      "updatedAt": "2026-11-12T12:00:00.000Z",
+      "researchHistory": [],
+      "opportunityHistory": [
+        {
+          "ruleKey": "flexibility",
+          "title": "Better choice. Less commitment.",
+          "short": "Investigate purchase flexibility.",
+          "category": "Product differentiation",
+          "audience": "Commitment-conscious buyers",
+          "reason": "Offer wording or mapped excerpts in at least two records match subscription or commitment terms. This is a keyword signal, not evidence of customer frustration.",
+          "body": "Compare the actual plan terms and ask customers whether a smaller trial or flexible purchase option would help. Offered terms are not observed purchasing behavior.",
+          "basis": [
+            {
+              "competitorId": "daybreak",
+              "name": "Daybreak",
+              "text": "A monthly coffee subscription designed for busy mornings, with brew guides included.",
+              "sources": [
+                {
+                  "id": "d2",
+                  "title": "Sample subscription page",
+                  "excerpt": "A monthly coffee subscription designed for busy mornings, with brew guides included.",
+                  "fields": [
+                    "features",
+                    "audiences",
+                    "behavior"
+                  ],
+                  "url": "",
+                  "kind": "Demo",
+                  "method": "demo",
+                  "segmentMappings": [
+                    {
+                      "segmentId": "segment-2",
+                      "fields": [
+                        "audiences"
+                      ]
+                    }
+                  ],
+                  "collectedAt": "2026-11-12T12:00:00.000Z"
+                }
+              ]
+            },
+            {
+              "competitorId": "roam",
+              "name": "Roam Coffee",
+              "text": "The tasting subscription has an initial three-month commitment. Brew guides and coffee equipment are available.",
+              "sources": [
+                {
+                  "id": "r3",
+                  "title": "Sample plan terms",
+                  "excerpt": "The tasting subscription has an initial three-month commitment. Brew guides and coffee equipment are available.",
+                  "fields": [
+                    "behavior",
+                    "features"
+                  ],
+                  "url": "",
+                  "kind": "Demo",
+                  "method": "demo",
+                  "segmentMappings": [],
+                  "collectedAt": "2026-11-12T12:00:00.000Z"
+                }
+              ]
+            },
+            {
+              "competitorId": "parcel",
+              "name": "Parcel Coffee",
+              "text": "Coffee for home enthusiasts and busy professionals. From $21 per 250 g bag, with blends, gift boxes, and one-time purchases. Skip, pause, or cancel your subscription.",
+              "sources": [
+                {
+                  "id": "p1",
+                  "title": "Sample plans page",
+                  "excerpt": "Coffee for home enthusiasts and busy professionals. From $21 per 250 g bag, with blends, gift boxes, and one-time purchases. Skip, pause, or cancel your subscription.",
+                  "fields": [
+                    "products",
+                    "pricing",
+                    "audiences",
+                    "features",
+                    "behavior",
+                    "positioning"
+                  ],
+                  "url": "",
+                  "kind": "Demo",
+                  "method": "demo",
+                  "segmentMappings": [
+                    {
+                      "segmentId": "segment-1",
+                      "fields": [
+                        "audiences"
+                      ]
+                    },
+                    {
+                      "segmentId": "segment-2",
+                      "fields": [
+                        "audiences"
+                      ]
+                    }
+                  ],
+                  "collectedAt": "2026-11-12T12:00:00.000Z"
+                }
+              ]
+            }
+          ],
+          "experiment": "Review plan terms, then interview 5–10 prospective customers about actual purchase barriers before testing a flexible offer.",
+          "limitation": "Keyword matches and plan language do not establish an unmet need or market demand.",
+          "id": "flexibility",
+          "revision": 1,
+          "fingerprint": "9566:2985111115:4210365513",
+          "lifecycle": "current",
+          "createdAt": "2026-11-12T12:00:00.000Z",
+          "demo": true,
+          "status": "To explore",
+          "note": ""
+        },
+        {
+          "ruleKey": "audience:office teams",
+          "title": "Take a closer look at office teams.",
+          "short": "1 of 4 records mention this audience.",
+          "category": "Audience research",
+          "audience": "Office teams",
+          "reason": "This audience label is missing from some research records. That is a documentation gap, not proof that competitors do not serve it.",
+          "body": "Investigate office teams before considering a specific offer. Missing mentions cannot establish an underserved market.",
+          "basis": [
+            {
+              "competitorId": "common",
+              "name": "Common Ground",
+              "text": "Recorded audience: Office teams. Arrange dependable shared supplies.",
+              "sources": [
+                {
+                  "id": "c2",
+                  "title": "Sample about page",
+                  "excerpt": "Approachable coffee for office teams and conscious consumers, with clear sourcing information.",
+                  "fields": [
+                    "positioning",
+                    "audiences",
+                    "interests"
+                  ],
+                  "url": "",
+                  "kind": "Demo",
+                  "method": "demo",
+                  "segmentMappings": [
+                    {
+                      "segmentId": "segment-1",
+                      "fields": [
+                        "audiences"
+                      ]
+                    },
+                    {
+                      "segmentId": "segment-2",
+                      "fields": [
+                        "audiences"
+                      ]
+                    }
+                  ],
+                  "collectedAt": "2026-11-12T12:00:00.000Z"
+                }
+              ]
+            }
+          ],
+          "experiment": "Check competitor evidence and interview prospective office teams about their alternatives and unmet needs. Record what would disprove this hypothesis.",
+          "limitation": "Recorded mentions describe this research set, not market coverage, audience size, or demand.",
+          "id": "audience:office teams",
+          "revision": 1,
+          "fingerprint": "9566:2985111115:4210365513",
+          "lifecycle": "current",
+          "createdAt": "2026-11-12T12:00:00.000Z",
+          "demo": true,
+          "status": "To explore",
+          "note": ""
+        },
+        {
+          "ruleKey": "audience:busy professionals",
+          "title": "Take a closer look at busy professionals.",
+          "short": "2 of 4 records mention this audience.",
+          "category": "Audience research",
+          "audience": "Busy professionals",
+          "reason": "This audience label is missing from some research records. That is a documentation gap, not proof that competitors do not serve it.",
+          "body": "Investigate busy professionals before considering a specific offer. Missing mentions cannot establish an underserved market.",
+          "basis": [
+            {
+              "competitorId": "daybreak",
+              "name": "Daybreak",
+              "text": "Recorded audience: Busy professionals. Spend less time arranging coffee deliveries.",
+              "sources": [
+                {
+                  "id": "d2",
+                  "title": "Sample subscription page",
+                  "excerpt": "A monthly coffee subscription designed for busy mornings, with brew guides included.",
+                  "fields": [
+                    "features",
+                    "audiences",
+                    "behavior"
+                  ],
+                  "url": "",
+                  "kind": "Demo",
+                  "method": "demo",
+                  "segmentMappings": [
+                    {
+                      "segmentId": "segment-2",
+                      "fields": [
+                        "audiences"
+                      ]
+                    }
+                  ],
+                  "collectedAt": "2026-11-12T12:00:00.000Z"
+                }
+              ]
+            },
+            {
+              "competitorId": "parcel",
+              "name": "Parcel Coffee",
+              "text": "Recorded audience: Busy professionals. Spend less time arranging coffee deliveries.",
+              "sources": [
+                {
+                  "id": "p1",
+                  "title": "Sample plans page",
+                  "excerpt": "Coffee for home enthusiasts and busy professionals. From $21 per 250 g bag, with blends, gift boxes, and one-time purchases. Skip, pause, or cancel your subscription.",
+                  "fields": [
+                    "products",
+                    "pricing",
+                    "audiences",
+                    "features",
+                    "behavior",
+                    "positioning"
+                  ],
+                  "url": "",
+                  "kind": "Demo",
+                  "method": "demo",
+                  "segmentMappings": [
+                    {
+                      "segmentId": "segment-1",
+                      "fields": [
+                        "audiences"
+                      ]
+                    },
+                    {
+                      "segmentId": "segment-2",
+                      "fields": [
+                        "audiences"
+                      ]
+                    }
+                  ],
+                  "collectedAt": "2026-11-12T12:00:00.000Z"
+                }
+              ]
+            }
+          ],
+          "experiment": "Check competitor evidence and interview prospective busy professionals about their alternatives and unmet needs. Record what would disprove this hypothesis.",
+          "limitation": "Recorded mentions describe this research set, not market coverage, audience size, or demand.",
+          "id": "audience:busy professionals",
+          "revision": 1,
+          "fingerprint": "9566:2985111115:4210365513",
+          "lifecycle": "current",
+          "createdAt": "2026-11-12T12:00:00.000Z",
+          "demo": true,
+          "status": "To explore",
+          "note": ""
+        }
+      ]
+    }
+  ]
+}

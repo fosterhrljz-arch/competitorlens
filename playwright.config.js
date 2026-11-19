@@ -1,0 +1,2 @@
+import { defineConfig } from '@playwright/test';
+export default defineConfig({testDir:'./tests',outputDir:process.env.CL_QA_DIR?process.env.CL_QA_DIR+'/playwright-results':'./test-results',testMatch:'**/*.spec.mjs',fullyParallel:false,workers:1,timeout:30000,reporter:'list',use:{baseURL:'http://127.0.0.1:4173',channel:'msedge',headless:true,viewport:{width:1536,height:1024}},webServer:{command:'node scripts/serve.mjs',url:'http://127.0.0.1:4173',reuseExistingServer:true}});

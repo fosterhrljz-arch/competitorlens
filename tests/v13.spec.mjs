@@ -1,0 +1,115 @@
+import { test, expect } from '@playwright/test';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { realWorkspace } from './fixtures.mjs';
+import { prepareProject, changeOpportunity, opportunities } from '../src/lib/model.js';
+const KEY='competitorlens.v1';
+const saved=page=>page.evaluate(key=>JSON.parse(localStorage.getItem(key)),KEY);
+async function seed(page,state){await page.goto('/');await page.evaluate(({key,state})=>localStorage.setItem(key,JSON.stringify(state)),{key:KEY,state});await page.reload();}
+async function go(page,name){const menu=page.getByRole('button',{name:'Open navigation',exact:true});if(await menu.isVisible())await menu.click();await page.locator('.sidebar').getByRole('button',{name,exact:true}).click();}
+async function resume(page){await page.getByRole('button',{name:'Resume Recent Project',exact:true}).click();}
+async function downloadText(page,button){const pending=page.waitForEvent('download');await button.click();const d=await pending;let text='';for await(const chunk of await d.createReadStream())text+=chunk.toString();return text;}
+async function create(page,name){await page.getByRole('button',{name:'New Project',exact:true}).click();await page.getByLabel('Project name *').fill(name);await page.getByLabel('Industry or market').fill('Creative software');await page.getByRole('button',{name:'Create project',exact:true}).click();}
+async function addRecord(page,{name,labels,price,method}){
+  await go(page,'Competitors');await page.locator('.page-title').getByRole('button',{name:'Add competitor',exact:true}).click();
+  await page.getByLabel('Competitor name',{exact:true}).fill(name);await page.getByLabel('Website URL',{exact:true}).fill(`https://${name.toLowerCase()}.example`);
+  await page.getByLabel('Products & services',{exact:true}).fill(name==='Gamma'?'One-time shared toolkit':'Monthly subscription workspace');
+  await page.getByLabel('Features',{exact:true}).fill(name==='Gamma'?'Export|Shared workspace':'Subscription|Shared workspace');
+  await page.getByLabel('Pricing notes',{exact:true}).fill(`USD ${price} per month`);await page.getByLabel('Starting price amount',{exact:true}).fill(String(price));await page.getByLabel('Price unit',{exact:true}).fill('month');
+  await page.getByRole('button',{name:'Continue to audience',exact:true}).click();await page.getByLabel('Audience segments',{exact:true}).fill(labels.join('|'));
+  await page.getByLabel('Customer needs',{exact:true}).fill(`General ${name} company context; not segment-specific.`);
+  for(const [i,label] of labels.entries()) {await page.getByLabel('Research scope',{exact:true}).selectOption({label});await page.getByLabel('Customer needs',{exact:true}).fill(`${label}: ${i?'individual setup':'shared project review'} for ${name}.`);await page.getByLabel('Motivations',{exact:true}).fill(i?'Keep personal control.':'Reduce team administration.');await page.getByLabel('Purchasing behavior',{exact:true}).fill('Interview hypothesis; no purchase rate measured.');}
+  await page.getByRole('button',{name:'Continue to evidence',exact:true}).click();
+  if(method==='fetched'){
+    await page.getByLabel('Source URL',{exact:true}).fill('https://fixture.test/plans');await page.getByRole('button',{name:'Fetch page',exact:true}).click();await expect(page.getByLabel('Source title',{exact:true})).toHaveValue('Reviewed plan terms');await page.getByLabel('Products',{exact:true}).check();await page.getByLabel('Pricing',{exact:true}).check();
+  }else{
+    if(method==='pasted')await page.getByLabel('Source URL',{exact:true}).fill('https://interview.example/notes');
+    await page.getByLabel('Source title',{exact:true}).fill(`${name} interview`);await page.getByLabel('Supporting excerpt or research note').fill(`${labels[0]} requested shared project review. This is an interview record.`);
+    await page.getByLabel('Evidence scope',{exact:true}).selectOption({label:labels[0]});await page.getByLabel('Needs',{exact:true}).check();await page.getByLabel('Audiences',{exact:true}).check();
+  }
+  await page.getByRole('button',{name:'Attach source',exact:true}).click();await page.getByRole('button',{name:'Save & finish',exact:true}).click();await expect(page.locator('.detail-heading h1')).toHaveText(name);
+}
+
+test('First run isolates demo and creates a genuinely empty real workspace',async({page})=>{
+  await page.goto('/');await expect(page.getByRole('button',{name:'Resume Recent Project',exact:true})).toBeDisabled();expect(await saved(page)).toBeNull();
+  await page.getByRole('button',{name:'Explore Demo',exact:true}).click();await go(page,'Opportunities');await page.getByLabel('Your validation notes').fill('Temporary demo note');expect(await saved(page)).toBeNull();
+  await go(page,'Back to welcome');await expect(page.getByRole('button',{name:'Resume Recent Project',exact:true})).toBeDisabled();await create(page,'Real first project');
+  const state=await saved(page);expect(state.version).toBe(4);expect(state.projects).toHaveLength(1);expect(state.projects[0].competitors).toEqual([]);expect(state.projects[0].demo).toBe(false);await expect(page.locator('.onboarding')).toBeVisible();
+  await go(page,'Data Management');const backup=JSON.parse(await downloadText(page,page.getByRole('button',{name:'Download full backup',exact:true})));expect(JSON.stringify(backup)).not.toContain('Brew & Co.');expect(JSON.stringify(backup)).not.toContain('Temporary demo note');
+  await page.reload();await resume(page);await expect(page.locator('.breadcrumbs')).toContainText('Real first project');
+});
+
+test('Complete non-demo journey preserves segment intelligence and validated history through export, restore, and reload',async({page,context})=>{
+  test.setTimeout(90000);
+  await page.route('https://fixture.test/plans',route=>route.fulfill({status:200,contentType:'text/html',headers:{'Access-Control-Allow-Origin':'*'},body:'<title>Reviewed plan terms</title><p>Monthly subscription workspace: USD 12 per month. Review actual terms; no customer statistics.</p><script>window.evil=true</script>'}));
+  await page.goto('/');await create(page,'Independent studio research');
+  await addRecord(page,{name:'Alpha',labels:['Small studios','Solo creators'],price:0,method:'pasted'});
+  await addRecord(page,{name:'Beta',labels:['Small studios','Agencies'],price:12,method:'fetched'});
+  await context.setOffline(true);expect(await page.evaluate(()=>navigator.onLine)).toBe(false);
+  await addRecord(page,{name:'Gamma',labels:['Agencies','Office teams'],price:24,method:'manual'});
+  const research=await saved(page),cs=research.projects[0].competitors;
+  expect(cs).toHaveLength(3);expect(cs.every(c=>!c.demo)).toBe(true);expect(cs.map(c=>c.sources[0].method)).toEqual(['pasted','fetched','manual']);expect(cs[0].audienceResearch[0].needs).not.toBe(cs[0].audienceResearch[1].needs);
+  await go(page,'Audience Analysis');await page.locator('.segment-item').filter({hasText:'Small studios'}).click();await expect(page.locator('.customer-insight').first()).toContainText('Small studios: shared project review for Alpha.');expect((await page.locator('.customer-insight').allTextContents()).join(' ')).not.toContain('General Alpha company context');
+  await page.locator('.customer-insight').first().getByRole('button',{name:'1 mapped sources',exact:true}).click();await expect(page.locator('.segment-evidence')).toContainText('User-supplied excerpt (URL provided)');
+  await go(page,'Competitive Matrix');await page.getByRole('button',{name:'Include Gamma',exact:true}).click();await expect(page.locator('table.matrix thead th')).toHaveCount(3);await page.getByRole('button',{name:'Alpha: Small studios · Review audience evidence',exact:true}).click();await expect(page.getByLabel('Filter evidence audience scope')).not.toHaveValue('');await expect(page.locator('.source-list')).toContainText('Alpha interview');await go(page,'Competitive Matrix');await page.getByRole('button',{name:/Alpha: shared workspace/}).click();await expect(page.getByLabel('Filter sources by field')).toHaveValue('features');
+  await go(page,'Opportunities');await page.locator('.opportunity-choice').filter({hasText:'Better choice. Less commitment.'}).click();await page.getByLabel('Your validation notes').fill('Validated with five interviews for the original offer.');await page.locator('.validation select').selectOption('Validated');
+  await go(page,'Competitors');await page.locator('.card-name').filter({hasText:/^Alpha$/}).click();await page.getByRole('button',{name:'Edit competitor',exact:true}).click();await page.getByLabel('Products & services',{exact:true}).fill('One-time toolkit');await page.getByLabel('Features',{exact:true}).fill('Shared workspace|Export');await page.getByRole('button',{name:'Save competitor',exact:true}).click();
+  await go(page,'Opportunities');await page.getByRole('button',{name:/^History/}).click();const preserved=page.locator('.opportunity-choice').filter({hasText:'Better choice. Less commitment.'}).filter({hasText:'Validated'});await preserved.click();await expect(page.getByLabel('Your validation notes')).toHaveValue('Validated with five interviews for the original offer.');await expect(page.locator('.opportunity-detail')).toContainText('Stale / Needs review');
+  await go(page,'Overview');await page.getByRole('button',{name:'Include Gamma',exact:true}).click();await page.getByRole('button',{name:'Export report',exact:true}).click();await expect(page.locator('.scope-count')).toContainText('2 selected');
+  await page.getByLabel('Report detail',{exact:true}).selectOption('detailed');
+  const html=await downloadText(page,page.getByRole('button',{name:'Export HTML',exact:true}));expect(html).toContain('2 of 3 project records');expect(html).toContain('Validated with five interviews for the original offer.');expect(html).toContain('User-supplied excerpt (URL provided)');expect(html).toContain('Fetched page text');expect(html).toContain('USD 0 / month');expect(html).not.toContain('window.evil');
+  if(process.env.CL_QA_DIR){await mkdir(process.env.CL_QA_DIR,{recursive:true});await writeFile(join(process.env.CL_QA_DIR,'journey-report.html'),html);await page.pdf({path:join(process.env.CL_QA_DIR,'journey-report.pdf'),format:'A4',printBackground:true});}
+  await go(page,'Data Management');const backup=await downloadText(page,page.getByRole('button',{name:'Download full backup',exact:true}));const expected=JSON.parse(backup);expect(expected.projects).toHaveLength(1);expect(JSON.stringify(expected)).not.toContain('demo-brew');
+  await page.getByLabel('Project',{exact:true}).selectOption('__new');await page.getByLabel('Project name *').fill('Temporary second project');await page.getByRole('button',{name:'Create project',exact:true}).click();await go(page,'Data Management');await page.getByLabel('Restore backup file').setInputFiles({name:'research.json',mimeType:'application/json',buffer:Buffer.from(backup)});await page.getByRole('button',{name:'Replace workspace',exact:true}).click();expect(await saved(page)).toEqual(expected);
+  await context.setOffline(false);await page.reload();await resume(page);expect(await saved(page)).toEqual(expected);await go(page,'Opportunities');await page.getByRole('button',{name:/^History/}).click();await page.locator('.opportunity-choice').filter({hasText:'Validated'}).first().click();await expect(page.getByLabel('Your validation notes')).toHaveValue('Validated with five interviews for the original offer.');
+});
+
+test('Pending URLs and mappings cannot be discarded by save; edited fetched text has honest provenance',async({page})=>{
+  await seed(page,realWorkspace());await resume(page);await go(page,'Competitors');await page.locator('.page-title').getByRole('button',{name:'Add competitor',exact:true}).click();await page.getByLabel('Competitor name',{exact:true}).fill('Draft source');await page.getByRole('button',{name:'Evidence',exact:true}).click();
+  await page.getByLabel('Source URL',{exact:true}).fill('https://draft.example');await page.getByRole('button',{name:'Save competitor',exact:true}).click();await expect(page.getByRole('alert')).toContainText('pending source');await expect(page.getByLabel('Source URL',{exact:true})).toHaveValue('https://draft.example');
+  await page.getByRole('button',{name:'Clear source draft',exact:true}).click();await page.getByLabel('Needs',{exact:true}).check();await page.getByRole('button',{name:'Save competitor',exact:true}).click();await expect(page.getByRole('alert')).toContainText('pending source');await page.getByRole('button',{name:'Clear source draft',exact:true}).click();
+  await page.getByLabel('Source URL',{exact:true}).fill('https://blocked.example');await page.getByRole('button',{name:'Fetch page',exact:true}).click();await expect(page.locator('.fetch-message')).toContainText('paste a relevant excerpt');
+  await page.route('https://fixture.test/text',route=>route.fulfill({status:200,contentType:'text/html',headers:{'Access-Control-Allow-Origin':'*'},body:'<title>Fetched sample</title><p>Original collected text.</p>'}));await page.getByLabel('Source URL',{exact:true}).fill('https://fixture.test/text');await page.getByRole('button',{name:'Fetch page',exact:true}).click();await expect(page.getByLabel('Source title',{exact:true})).toHaveValue('Fetched sample');await page.getByLabel('Supporting excerpt or research note').fill('Edited analyst excerpt.');await page.getByRole('button',{name:'Attach source',exact:true}).click();await page.getByRole('button',{name:'Save competitor',exact:true}).click();const last=(await saved(page)).projects[0].competitors.at(-1);expect(last.sources[0].method).toBe('pasted');
+});
+
+test('Pricing conflicts need review; last scope chip cannot be removed and colors remain distinct',async({page})=>{
+  const state=realWorkspace();state.projects[0].competitors.forEach(c=>c.seriesIndex=0);await seed(page,state);await resume(page);
+  const colors=await page.locator('.scope-chip .series-dot').evaluateAll(els=>els.map(el=>el.style.background));expect(new Set(colors).size).toBe(3);
+  await page.getByRole('button',{name:'Include Canvas Works',exact:true}).click();await page.getByRole('button',{name:'Include Team Harbor',exact:true}).click();await expect(page.getByRole('button',{name:'Include Northstar Studio',exact:true})).toBeDisabled();
+  await go(page,'Competitors');await page.locator('.card-name').filter({hasText:/^Northstar Studio$/}).click();await page.getByRole('button',{name:'Edit competitor',exact:true}).click();await page.getByLabel('Starting price amount',{exact:true}).fill('20');await page.getByLabel('Pricing notes',{exact:true}).fill('EUR 12 per year');await page.getByRole('button',{name:'Save competitor',exact:true}).click();await expect(page.getByRole('alert')).toContainText('differs');
+  await page.getByLabel('Explain pricing difference',{exact:true}).fill('Notes describe the previous annual EUR offer; the current starting offer is USD 20 monthly.');await page.getByRole('button',{name:'Save competitor',exact:true}).click();await expect(page.locator('.detail-main')).toContainText('USD 20 / month');await expect(page.locator('.detail-main')).toContainText('EUR 12 per year');
+  await go(page,'Competitors');await page.getByRole('button',{name:'Pricing & positioning',exact:true}).click();await expect(page.getByRole('button',{name:'Northstar Studio: 20 USD per month',exact:true})).toBeVisible();
+});
+
+test('Storage quota failure retains the dialog, blocks success and offers a complete recovery backup',async({page})=>{
+  await page.addInitScript(()=>{window.originalSetItem=Storage.prototype.setItem;Storage.prototype.setItem=function(key,value){if(key==='competitorlens.v1')throw new DOMException('Quota exceeded','QuotaExceededError');return window.originalSetItem.call(this,key,value);};});
+  await page.goto('/');await page.getByRole('button',{name:'New Project',exact:true}).click();await page.getByLabel('Project name *').fill('Quota recovery');await page.getByRole('button',{name:'Create project',exact:true}).click();const dialog=page.getByRole('dialog');await expect(dialog).toBeVisible();await expect(dialog.getByRole('alert')).toContainText('Save failed');await expect(page.locator('.toast')).toHaveCount(0);const backup=await downloadText(page,dialog.getByRole('button',{name:'Download unsaved backup',exact:true}));expect(JSON.parse(backup).projects[0].name).toBe('Quota recovery');expect(await saved(page)).toBeNull();
+  await page.evaluate(()=>Storage.prototype.setItem=window.originalSetItem);await page.getByRole('button',{name:'Create project',exact:true}).click();await expect(dialog).toHaveCount(0);await expect(page.locator('.storage-warning')).toHaveCount(0);await page.reload();await resume(page);expect((await saved(page)).projects[0].name).toBe('Quota recovery');
+});
+
+test('Legacy browser storage remains untouched on read while migrated backup exposes preserved general notes and history',async({page})=>{
+  const legacy=JSON.parse(await readFile(new URL('../examples/demo-project.json',import.meta.url),'utf8'));legacy.projects[0].opportunityState['retired-hypothesis']={status:'Validated',note:'Keep this earlier decision.'};const raw=JSON.stringify(legacy);
+  await page.goto('/');await page.evaluate(({key,raw})=>localStorage.setItem(key,raw),{key:KEY,raw});await page.reload();await resume(page);await go(page,'Audience Analysis');await expect(page.locator('.customer-insight').first()).toContainText('Not recorded for this audience.');await page.locator('.legacy-notes summary').first().click();await expect(page.locator('.legacy-notes')).toContainText(legacy.projects[0].competitors[0].needs);
+  await go(page,'Opportunities');await page.getByRole('button',{name:/^History/}).click();await page.locator('.opportunity-choice').filter({hasText:'Recovered validation: retired-hypothesis'}).click();await expect(page.getByLabel('Your validation notes')).toHaveValue('Keep this earlier decision.');expect(await page.evaluate(key=>localStorage.getItem(key),KEY)).toBe(raw);
+  await go(page,'Data Management');const backup=JSON.parse(await downloadText(page,page.getByRole('button',{name:'Download full backup',exact:true})));expect(backup.version).toBe(4);expect(backup.projects[0].competitors[0].needs).toBe(legacy.projects[0].competitors[0].needs);
+});
+
+for(const viewport of [{width:1440,height:900},{width:768,height:1024},{width:390,height:844},{width:320,height:720}]) test(`V1.3 complete visual journey at ${viewport.width}px`,async({page,context})=>{
+  test.setTimeout(90000);await page.setViewportSize(viewport);const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+  const out=process.env.CL_QA_DIR; if(out)await mkdir(out,{recursive:true});
+  const capture=async(name)=>{
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),name).toBe(true);
+    const tiny=await page.evaluate(()=>[...document.querySelectorAll('p,span,small,button,label,select,td,th')].filter(el=>el.getBoundingClientRect().height>0 && el.textContent.trim() && parseFloat(getComputedStyle(el).fontSize)<12).map(el=>el.textContent.slice(0,60)));
+    expect(tiny,`${name}: text must meet the 12px auxiliary floor`).toEqual([]);
+    if(viewport.width<=768){const smallTargets=await page.evaluate(()=>[...document.querySelectorAll('button,select,input:not([type=checkbox]):not([type=radio])')].filter(el=>el.getBoundingClientRect().width>0 && el.getBoundingClientRect().height>0 && el.getBoundingClientRect().height<43.9).map(el=>el.getAttribute('aria-label')||el.textContent.slice(0,60)));expect(smallTargets,`${name}: controls need 44px touch height`).toEqual([]);}
+    if(out)await page.screenshot({path:join(out,`v13-${name}-${viewport.width}.png`),fullPage:true,animations:'disabled'});
+  };
+  await page.goto('/');await capture('welcome');await page.getByRole('button',{name:'New Project',exact:true}).click();await capture('new-project-modal');await page.keyboard.press('Escape');await create(page,'Empty onboarding');await capture('onboarding');
+  const state=realWorkspace();let p=changeOpportunity(state.projects[0],opportunities(state.projects[0])[0].id,{status:'Validated',note:'Original research decision retained.'});state.projects[0]=prepareProject({...p,competitors:p.competitors.map((c,i)=>i?c:{...c,positioning:'Updated offer wording.'})});await seed(page,state);await resume(page);await capture('overview');
+  expect(await page.locator('.chart-caption').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(12);
+  for(const [label,slug] of [['Competitors','competitors'],['Audience Analysis','audience'],['Competitive Matrix','matrix'],['Opportunities','opportunities'],['Reports','reports'],['Data Management','data']]) {await go(page,label);await capture(slug);}
+  await go(page,'Opportunities');await page.getByRole('button',{name:/^History/}).click();await capture('history');
+  await go(page,'Competitors');await page.getByRole('button',{name:'Pricing & positioning',exact:true}).click();await capture('pricing');await page.getByRole('button',{name:'Profiles',exact:true}).click();await page.locator('.card-name').filter({hasText:/^Northstar Studio$/}).click();await capture('detail');await page.getByRole('button',{name:'Sources (1)',exact:true}).click();await capture('detail-sources');await page.getByRole('button',{name:'Audience',exact:true}).click();await capture('detail-audience');await page.getByRole('button',{name:'Edit competitor',exact:true}).click();await capture('editor-profile');await page.getByRole('button',{name:'Continue to audience',exact:true}).click();await page.getByLabel('Research scope',{exact:true}).selectOption({label:'Small studios'});await capture('editor-audience');await page.getByRole('button',{name:'Continue to evidence',exact:true}).click();await capture('editor-evidence');await page.getByLabel('Source URL',{exact:true}).fill('https://draft.example');await page.getByRole('button',{name:'Cancel',exact:true}).click();await capture('discard-modal');await page.getByRole('button',{name:'Discard changes',exact:true}).click();
+  await page.getByRole('button',{name:'Documentation',exact:true}).click();await capture('documentation-modal');await page.keyboard.press('Escape');await go(page,'Reports');const html=await downloadText(page,page.getByRole('button',{name:'Export HTML',exact:true}));
+  const exported=await context.newPage();await exported.setViewportSize(viewport);await exported.setContent(html);expect(await exported.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if(out)await exported.screenshot({path:join(out,`v13-exported-report-${viewport.width}.png`),animations:'disabled'});await exported.locator('.report-analytics').scrollIntoViewIfNeeded();if(out)await exported.screenshot({path:join(out,`v13-exported-charts-${viewport.width}.png`),animations:'disabled'});await exported.close();expect(errors).toEqual([]);
+});
